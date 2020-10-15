@@ -18,9 +18,9 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void createUsersTable() {
-            util.connection();
+        util.connection();
 
-        try (Statement statement = util.conn.createStatement()){
+        try (Statement statement = util.conn.createStatement()) {
             util.conn.setAutoCommit(false);
             String table = "CREATE TABLE IF NOT EXISTS base (Id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL, " +
                     "name VARCHAR(20) NOT NULL, " +
@@ -28,9 +28,19 @@ public class UserDaoJDBCImpl implements UserDao {
                     "age INT NOT NULL)";
             statement.executeUpdate(table);
             util.conn.commit();
-            util.conn.setAutoCommit(true);
         } catch (SQLException t) {
             t.printStackTrace();
+            try {
+                util.conn.rollback();
+            } catch (SQLException r) {
+                r.printStackTrace();
+            } finally {
+                try {
+                    util.conn.setAutoCommit(true);
+                } catch (SQLException y) {
+                    y.printStackTrace();
+                }
+            }
         }
     }
 
@@ -42,9 +52,19 @@ public class UserDaoJDBCImpl implements UserDao {
             String tableDrop = "DROP TABLE if EXISTS base";
             statement.executeUpdate(tableDrop);
             util.conn.commit();
-            util.conn.setAutoCommit(true);
         } catch (SQLException t) {
             t.printStackTrace();
+            try {
+                util.conn.rollback();
+            } catch (SQLException r) {
+                r.printStackTrace();
+            } finally {
+                try {
+                    util.conn.setAutoCommit(true);
+                } catch (SQLException y) {
+                    y.printStackTrace();
+                }
+            }
         }
     }
 
@@ -59,22 +79,43 @@ public class UserDaoJDBCImpl implements UserDao {
             statement.executeUpdate();
             System.out.println("User с именем " + name + " добавлен в базу данных");
             util.conn.commit();
-            util.conn.setAutoCommit(true);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            try {
+                util.conn.rollback();
+            } catch (SQLException r) {
+                r.printStackTrace();
+            } finally {
+                try {
+                    util.conn.setAutoCommit(true);
+                } catch (SQLException y) {
+                    y.printStackTrace();
+                }
+            }
         }
     }
 
     public void removeUserById(long id) {
+
         try (PreparedStatement statement = util.conn.prepareStatement("DELETE FROM base WHERE Id = ?")) {
             util.connection();
             util.conn.setAutoCommit(false);
             statement.setLong(1, id);
             statement.executeUpdate();
             util.conn.commit();
-            util.conn.setAutoCommit(true);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            try {
+                util.conn.rollback();
+            } catch (SQLException r) {
+                r.printStackTrace();
+            } finally {
+                try {
+                    util.conn.setAutoCommit(true);
+                } catch (SQLException y) {
+                    y.printStackTrace();
+                }
+            }
         }
     }
 
@@ -100,11 +141,23 @@ public class UserDaoJDBCImpl implements UserDao {
             util.conn.setAutoCommit(true);
         } catch (SQLException t) {
             t.printStackTrace();
+            try {
+                util.conn.rollback();
+            } catch (SQLException r) {
+                r.printStackTrace();
+            } finally {
+                try {
+                    util.conn.setAutoCommit(true);
+                } catch (SQLException y) {
+                    y.printStackTrace();
+                }
+            }
         }
         return results;
     }
 
     public void cleanUsersTable() {
+
         try (Statement statement = util.conn.createStatement()){
             util.connection();
             util.conn.setAutoCommit(false);
@@ -114,6 +167,17 @@ public class UserDaoJDBCImpl implements UserDao {
             util.conn.setAutoCommit(true);
         } catch (SQLException t) {
             t.printStackTrace();
+            try {
+                util.conn.rollback();
+            } catch (SQLException r) {
+                r.printStackTrace();
+            } finally {
+                try {
+                    util.conn.setAutoCommit(true);
+                } catch (SQLException y) {
+                    y.printStackTrace();
+                }
+            }
         }
     }
 }
